@@ -12,12 +12,10 @@ with open(Path(__file__).parent / "randomizer.json", "r", encoding="utf-8") as f
 
 @app.route("/")
 def home():
-    image = "https://blog.darwinbox.com/hubfs/MicrosoftTeams-image%20%282%29-1.png"
-    repo = "https://github.com/winsonlar/myrepo"
     quote = choice(quotes)
 
     return render_template(
-        "index.html", image_url=image_url, repo_url=repo_url, quote=quote
+        "index.html", image_url="https://blog.darwinbox.com/hubfs/MicrosoftTeams-image%20%282%29-1.png", repo_url="https://github.com/winsonlar/myrepo", quote=quote
     )
 
 
