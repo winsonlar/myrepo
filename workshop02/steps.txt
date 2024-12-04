@@ -1,0 +1,7 @@
+# Create namespace and config files
+kubectl apply -f config.yaml
+# Deploy database and backend
+kubectl apply -f bggns.yaml
+
+# Port forward the local port to service port
+kubectl port-forward service/bggns-backend 8080:8080
