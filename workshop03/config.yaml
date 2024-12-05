@@ -1,0 +1,33 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: csns
+  labels:
+    app: codeserver
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cs-cm
+  namespace: csns
+  labels:
+    app: codeserver
+data:
+  PROXY_DOMAIN: node-137.184.249.14.nip.io
+  TZ: Asia/Singapore
+  DEFAULT_WORKSPACE: /config/workspace
+
+
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: cs-secret
+  namespace: csns
+  labels:
+    app: codeserver
+data:
+  SUDO_PASSWORD: cGFzc3dvcmQ=
+  PASSWORD: cGFzc3dvcmQ=

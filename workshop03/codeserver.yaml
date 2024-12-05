@@ -1,0 +1,87 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: codeserver-deploy
+  namespace: csns  
+  labels:
+    app: codeserver
+spec:
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 1
+  selector:
+    matchLabels:
+      app: codeserver 
+  template:
+    metadata:
+      name: codeserver-po 
+      labels:
+        app: codeserver
+        name: codeserver-po
+    spec:
+      volumes:
+      - name: src-vol
+        persistentVolumeClaim:
+          claimName: cs-pvc
+      containers:
+        - name: codeserver-containers
+          image: lscr.io/linuxserver/code-server:amd64-4.95.3
+          imagePullPolicy: IfNotPresent
+          envFrom:
+          - configMapRef:
+              name: cs-cm
+          - secretRef:
+              name: cs-secret
+          ports:
+          - containerPort: 8443
+          resources:
+            requests:
+              memory: 512M
+              cpu: 200m
+            limits:
+              memory: 512M
+              cpu: 200m
+          volumeMounts:
+          - name: src-vol
+            mountPath: /config/workspace
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: cs-svc
+  namespace: csns
+  labels:
+    app: codeserver
+spec:
+  selector:
+    app: codeserver
+  ports:
+  - name: cs-svc-port
+    port: 8443
+    targetPort: 8443
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: cs-ing
+  namespace: csns
+spec:
+  ingressClassName: nginx 
+  rules:
+  - host: node-137.184.249.14.nip.io
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: cs-svc
+            port:
+              number: 8443
+
